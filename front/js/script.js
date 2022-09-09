@@ -15,3 +15,5 @@ async function init() {
   document.getElementById("items").innerHTML = articles;                                            // html dans section id items
 }
 init();
+
+
