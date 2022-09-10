@@ -63,11 +63,6 @@ document.getElementById("addToCart").onclick = function(e){             //au cli
   window.localStorage.setItem("nbpanier",nbpanier)
   window.localStorage.setItem(nbpanier,[productid, productSelectedColor, productquantity])
 
-
-
-
-
-
 }
 
 

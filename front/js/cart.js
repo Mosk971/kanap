@@ -97,15 +97,162 @@ async function changer(element, id){
     window.localStorage.setItem(id, [id1,color,newquantity])
 
 
-if(newquantity > number){
-    totalprice = totalprice + productprice
-}else {
-    totalprice = totalprice - productprice
-}
-document.getElementById(`nbr${id1}`).innerHTML = "Qté :" + newquantity
-// totalprice = ((newquantity > number) ?  totalprice + productprice : totalprice - productprice)
-// // totalprice = number-price
-document.getElementById("totalPrice").innerHTML = totalprice
-}
-    
+    if(newquantity > number){
+        totalprice = totalprice + productprice
+    }else {
+        totalprice = totalprice - productprice
+    }
 
+    document.getElementById(`nbr${id1}`).innerHTML = "Qté :" + newquantity
+    // totalprice = ((newquantity > number) ?  totalprice + productprice : totalprice - productprice)
+    // // totalprice = number-price
+    document.getElementById("totalPrice").innerHTML = totalprice
+}
+
+
+    
+document.getElementById('firstName').addEventListener("input", function(event){checkInput()})    
+document.getElementById('lastName').addEventListener("input", function(event){checkInput()})  
+document.getElementById('address').addEventListener("input", function(event){checkInput()})
+document.getElementById('city').addEventListener("input", function(event){checkInput()}) 
+document.getElementById('email').addEventListener("input", function(event){checkInput()})       
+   // recherche de chiffre dans l'input  
+function isThereAnumber (word) {     
+    
+    let numberFound = false       
+    let string = word;
+    
+    // A chaque caractere issus du string(parametre).
+    for(let i = 0; i < string.length; i++)
+    {       	
+        //string[0] = a        string[1] = b   ...
+        let character = string[i]      
+        
+                //Tente de convertir character en nombre
+        character = parseInt(character)         	
+    
+        //if character is a number then "numberfound" is true
+        if(!isNaN(character)){           
+            numberFound = true        		
+        }      	
+    }     
+    return numberFound     
+} 
+      
+      
+function insertMessage (element, errorMessage){    	 
+    element.innerHTML = errorMessage     
+} 
+      
+     
+      
+function isThereOnlyLetter(mot){
+    var Regex = /^[a-zA-Z-\s]+$/
+
+    let textToTest = mot   
+
+    if(Regex.test(textToTest))
+    {      
+        return true
+    }
+    else
+    {      
+        return false
+}
+}
+      
+function isThisAddress(mot){
+    var Regex = /^[a-zA-Z0-9-\s]+$/
+
+    let textToTest = mot   
+
+    if(Regex.test(textToTest))
+    {      
+        return true
+    }
+    else
+    {      
+        return false
+}
+}      
+      
+   // Regex pour conditionner les caracteres pour email   
+function isThisEmail(mot){
+    var RegexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+
+    let textToTest = mot    
+
+    if(Regex.test(textToTest))  //si le rest est reussi
+    {      
+        return true
+    }
+    else
+    {      
+        return false
+}
+}       
+    
+ //Fonction regroupée 
+function checkInput(){    //La fonction checkInput regroupe les 3 fonctions
+
+    checkPrenomNomVille('firstName')
+    checkPrenomNomVille('lastName')
+    checkPrenomNomVille ('city')  
+    checkAdresse('address')
+    checkEmail('email')
+}
+      
+      // Envoi de MSG d'erreur
+function checkPrenomNomVille(elementId){
+    
+    let output = document.getElementById(elementId).value  //recupere la valeur
+    let outputError = document.getElementById(`${elementId}ErrorMsg`) //les parametre id et le msg a envoyer
+    let thereisOnlyLetter = isThereOnlyLetter(output)                   // lance la fonction is thereOnlyLetter et recupere le resultat dans thereIsOnlyLetter en true ou false
+        
+if(output != "" && thereisOnlyLetter == false)        //si output n'est pas vide et que le test caractere only est false alors msg derreur
+    { 
+    insertMessage(outputError , "Mauvais caractère <3")       
+    }
+    else
+    {
+    insertMessage(outputError , "")           
+    }        
+}      
+      
+      
+function checkAdresse(elementId){
+
+let output = document.getElementById(elementId).value
+let outputError = document.getElementById(`${elementId}ErrorMsg`)
+let thisIsAddress = isThisAddress(output)      
+
+    if(output != "" && thisIsAddress == false)
+    { 
+    insertMessage(outputError , "Mauvais caractère <3")       
+    }
+    else
+    {
+    insertMessage(outputError , "")           
+    }        
+} 
+
+      
+function checkEmail(elementId){
+
+    let output = document.getElementById(elementId).value
+    let outputError = document.getElementById(`${elementId}ErrorMsg`)
+
+                 
+    let thisIsEmail = isThisEmail(output)      
+
+    
+    if(output != "" && thisIsEmail == false)
+    { 
+    insertMessage(outputError , "Mauvais caractère <3")       
+    }
+    else
+    {
+    insertMessage(outputError , "")           
+    }        
+}
+      
