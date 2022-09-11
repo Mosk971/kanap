@@ -58,11 +58,17 @@ document.getElementById("addToCart").onclick = function(e){             //au cli
   let nbpanier = window.localStorage.getItem("nbpanier")
   nbpanier = parseInt(nbpanier); 
   nbpanier += 1
-  console.log(nbpanier)  
+  console.log(nbpanier) 
+  
+  if(isNaN(nbpanier)){
+    nbpanier = 0
+  }
   
   window.localStorage.setItem("nbpanier",nbpanier)
   window.localStorage.setItem(nbpanier,[productid, productSelectedColor, productquantity])
 
+  window.location.replace(`http://127.0.0.1:5500/front/html/cart.html`)
+  
 }
 
 

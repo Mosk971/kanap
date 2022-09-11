@@ -1,6 +1,9 @@
 let totalprice = 0
 let  jsondata = {}
 
+let idArray = []
+let products = idArray
+
 async function panier () {      
 
     
@@ -14,8 +17,9 @@ async function panier () {
     
     
     for(let productdata of productsdata){
-        console.log(productdata["_id"])
+        
         let productdataid = productdata["_id"]
+        
         jsondata[productdataid] = productdata
     }
     console.log(jsondata)
@@ -29,16 +33,19 @@ async function panier () {
         let articledata = window.localStorage.getItem(i+1)
         
         if(articledata == ''){
-            console.log("vide")
+            
             continue
         }
 
         let articlearray = articledata.split(",")
-
+        
         let id = articlearray[0]
         let color = articlearray[1]
-        let number = articlearray[2] 
-        console.log(articlearray)
+        let number = articlearray[2]
+
+        console.log(idArray)
+
+        idArray.push(id)
 
 
         let productdata = jsondata[id]
@@ -70,15 +77,21 @@ async function panier () {
         totalprice += number*productdata.price
         document.getElementById("totalPrice").innerHTML = totalprice
     }           
-
+    
 }
 panier ()
 
-async function deleteItem(element, id){
+
+
+async function deleteItem(element, id){   ////
     element.parentNode.parentNode.parentNode.parentNode.innerHTML = ""
-    window.localStorage.setItem(id,'')
-    
-    console.log(id)
+    window.localStorage.setItem(id,'')    
+
+    let index = idArray.indexOf(id);
+    idArray.splice(index, 1);    
+    console.log(idArray)
+
+    totalprice -= price * newquantity
 }
 
 async function changer(element, id){
@@ -88,8 +101,7 @@ async function changer(element, id){
 
     let id1 = articlearray[0]
     let color = articlearray[1]
-    let number = articlearray[2] 
-    console.log(jsondata[id1]['price'])
+    let number = articlearray[2]    
     let productprice = jsondata[id1]['price']        
       
 
@@ -182,7 +194,7 @@ function isThisEmail(mot){
 
     let textToTest = mot    
 
-    if(Regex.test(textToTest))  //si le rest est reussi
+    if(RegexEmail.test(textToTest))  //si le rest est reussi
     {      
         return true
     }
@@ -256,3 +268,36 @@ function checkEmail(elementId){
     }        
 }
       
+const formulaireAvis = document.querySelector(".cart__order__form").addEventListener("submit", async function (event) {
+    //stop laction par defaut
+   event.preventDefault()	
+      
+   let contact = {
+     firstName: event.target.querySelector("[name=firstName]").value,
+     lastName: event.target.querySelector("[name=lastName]").value,     
+     address: event.target.querySelector("[name=address]").value,
+     city: event.target.querySelector("[name=city]").value,
+     email: event.target.querySelector("[name=email]").value,
+   };
+   //conversion JSON de order
+//    const dataToSend = JSON.stringify(dfdf)
+//    const arrayToSend = JSON.stringify(df)   
+    console.log(contact)
+   
+    let bodyToSend = {contact:contact, products: idArray}
+    bodyToSend = JSON.stringify(bodyToSend)
+   
+    // Appel de la fonction fetch avec toutes les informations nécessaires
+    let orderForm = await fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: bodyToSend
+   })
+
+    let data = await orderForm.json()  
+    console.log(data)
+    
+    window.location.replace(`http://127.0.0.1:5500/front/html/confirmation.html?orderid="${data.orderId}"`) 
+
+    // localStorage.clear();
+});
