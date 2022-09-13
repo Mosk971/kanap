@@ -31,11 +31,11 @@ async function singleproduct() {
 }
 singleproduct();
 
- //NE PS OUBLIER LE CATCH APRES LE FETCH
- 
+ //--------------------------------------------------------------------------------------------------------------------
+  
 
 document.getElementById("addToCart").onclick = function(e){             //au click lance la fonction
-  
+  //recuperation des donnees
   let = productSelectedColor = document.getElementById("colors").value;   //recupere dans une variable la couleur
   let = productquantity = document.getElementById("quantity").value;      //recuepre dans une variable la quantité
   // console.log(productquantity, productSelectedColor)
@@ -49,27 +49,69 @@ document.getElementById("addToCart").onclick = function(e){             //au cli
     alert('Choisissez une quantité')
     return
   }  
+  //----------------version 1
 
-  // window.localStorage.setItem("idofproduct", productid)                   //store localement l'id la couleur et la quantité 
-  // window.localStorage.setItem("colorofproduct", productSelectedColor)
-  // window.localStorage.setItem("numberofproduct", productquantity)
+  // let nbpanier = window.localStorage.getItem("nbpanier")
+  // nbpanier = parseInt(nbpanier);  
+  // nbpanier += 1
+  // console.log(nbpanier) 
   
+  // if(isNaN(nbpanier)){
+  //   nbpanier = 0
+  // }
+  
+  // window.localStorage.setItem("nbpanier",nbpanier)
+  // window.localStorage.setItem(nbpanier,[productid, productSelectedColor, productquantity])
 
-  let nbpanier = window.localStorage.getItem("nbpanier")
-  nbpanier = parseInt(nbpanier); 
-  nbpanier += 1
-  console.log(nbpanier) 
+
+//---------version 2
+
+//traitemetn des donnees
+
+  productquantity = parseInt(productquantity)  
   
-  if(isNaN(nbpanier)){
-    nbpanier = 0
+  let oldgetpanier = window.localStorage.getItem("panier")
+  let oldpanierjsonObject = JSON.parse(oldgetpanier);
+  console.error(oldpanierjsonObject)
+
+  let panier = oldpanierjsonObject
+  if(!panier){
+    panier = {}
+  }  
+  
+  if(!panier[productid]){
+    panier[productid] = {}     
   }
+
   
-  window.localStorage.setItem("nbpanier",nbpanier)
-  window.localStorage.setItem(nbpanier,[productid, productSelectedColor, productquantity])
+  if(!panier[productid][productSelectedColor]){
+    panier[productid][productSelectedColor] = 0
+  }
+
+  productquantity = panier[productid][productSelectedColor] + productquantity   
+
+  panier[productid][productSelectedColor] = productquantity
+  
+  
+  
+  // soumission des donnees
+  let panierJsonString = JSON.stringify(panier)  
+  window.localStorage.setItem("panier", panierJsonString)
+
+  
+  let getpanier = window.localStorage.getItem("panier")
+  let panierjsonObject = JSON.parse(getpanier);
+
+  console.log(panierjsonObject)
+  
 
   window.location.replace(`http://127.0.0.1:5500/front/html/cart.html`)
   
 }
+
+// localStorage.clear();
+
+
 
 
 

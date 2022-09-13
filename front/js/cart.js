@@ -4,16 +4,21 @@ let  jsondata = {}
 let idArray = []
 let products = idArray
 
-async function panier () {      
-
+//Affichage du panier
+async function panier () { 
     
+    // recuperation des id produits depuis le local storage vers nbpanier
+    // let nbpanier = window.localStorage.getItem('nbpanier')
     
-    let nbpanier = window.localStorage.getItem('nbpanier')    
-    nbpanier = parseInt(nbpanier);
-
+    // // conversion en entier
+    // nbpanier = parseInt(nbpanier);
+    let panierString = window.localStorage.getItem("panier")
+    let panier = JSON.parse(panierString)
+    console.log(panier)
+    //recuperation de la liste des produits depuis l'api
     const response = await fetch(`http://localhost:3000/api/products/`);  
     const productsdata = await response.json();
-    
+    //conversion de la reponse  
     
     
     for(let productdata of productsdata){
@@ -22,59 +27,61 @@ async function panier () {
         
         jsondata[productdataid] = productdata
     }
-    console.log(jsondata)
+    console.log(jsondata)    
     
     
-    
-    
-    for(let i = 0; i < nbpanier ; i++ ){
-            console.log(i)
-                                                             //  window.localStorage.setItem(i+1, "")
-        let articledata = window.localStorage.getItem(i+1)
+    for(let key in panier){
+        //     console.log(i)
+        //                                                      //  window.localStorage.setItem(i+1, "")
+        // let articledata = window.localStorage.getItem(i+1)
         
-        if(articledata == ''){
+        // if(articledata == ''){
             
-            continue
-        }
+        //     continue
+        // }
 
-        let articlearray = articledata.split(",")
+        // let articlearray = articledata.split(",")
         
-        let id = articlearray[0]
-        let color = articlearray[1]
-        let number = articlearray[2]
 
-        console.log(idArray)
+        let id = key
+        let article = panier[id]
 
-        idArray.push(id)
+        for( let color in article){
+            number = article[color] 
 
+            
+            idArray.push(id)
+            let productdata = jsondata[id]
 
-        let productdata = jsondata[id]
-
-        let productdetails = `<article class="cart__item" data-id="${id}" data-color="${color}">
-            <div class="cart__item__img">
-                <img src="${productdata['imageUrl']}" alt="Photographie d'un canapé">
-            </div>
-            <div class="cart__item__content">
-                <div class="cart__item__content__description">
-                    <h2>${productdata['name']}</h2>
-                    <p>${color}</p>
-                    <p>${productdata['price']}</p>
+            let productdetails = `<article class="cart__item" data-id="${id}" data-color="${color}">
+                <div class="cart__item__img">
+                    <img src="${productdata['imageUrl']}" alt="Photographie d'un canapé">
                 </div>
-                <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                        <p id="nbr${id}">Qté :${number}</p>
-                        <input type="number" onchange ="changer(this, '${i+1}')" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${number}">
+                <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                        <h2>${productdata['name']}</h2>
+                        <p>${color}</p>
+                        <p>${productdata['price']}</p>
                     </div>
-                    <div class="cart__item__content__settings__delete">
-                        <p class="deleteItem" onclick ="deleteItem(this, '${i+1}')" >Supprimer</p>
+                    <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                            <p id="nbr${id}${color}">Qté :${number}</p>
+                            <input type="number" onchange ="changer(this, '${id}','${color}')" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${number}">
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                            <p class="deleteItem" onclick ="deleteItem(this, '${id}', '${color}')" >Supprimer</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            </article>`
+                </article>`
 
-        document.getElementById("cart__items").innerHTML += productdetails
+            document.getElementById("cart__items").innerHTML += productdetails
 
-        totalprice += number*productdata.price
+            totalprice += number*productdata.price
+        }
+        
+
+        
         document.getElementById("totalPrice").innerHTML = totalprice
     }           
     
@@ -83,30 +90,62 @@ panier ()
 
 
 
-async function deleteItem(element, id){   ////
+async function deleteItem(element, eid, ecolor){   ////
     element.parentNode.parentNode.parentNode.parentNode.innerHTML = ""
-    window.localStorage.setItem(id,'')    
+    let panierString = window.localStorage.getItem("panier")
+    let panier = JSON.parse(panierString)    
+    let number
+    let productprice = jsondata[eid]['price'] 
+     
+    for(let key in panier){
 
-    let index = idArray.indexOf(id);
-    idArray.splice(index, 1);    
-    console.log(idArray)
+        let id = key
+        let article = panier[id]
 
-    totalprice -= price * newquantity
+        for( let color in article){
+            number = article[color]
+            if(id == eid && color == ecolor){
+                delete panier[id][color]
+                let index = idArray.indexOf(eid);
+                idArray.splice(index, 1); 
+                break  
+            }
+        }
+    }
+       
+    totalprice -= number * productprice  
+    document.getElementById("totalPrice").innerHTML = totalprice
+    
+
+
+    newPanierString = JSON.stringify(panier)
+    window.localStorage.setItem("panier", newPanierString)   
+
+    // totalprice -= price * newquantity
 }
 
-async function changer(element, id){
-    let olddata =window.localStorage.getItem(id)
-    
-    let articlearray = olddata.split(",")
-
-    let id1 = articlearray[0]
-    let color = articlearray[1]
-    let number = articlearray[2]    
-    let productprice = jsondata[id1]['price']        
-      
-
+async function changer(element, eid, ecolor){
+    let panierString = window.localStorage.getItem("panier")
+    let panier = JSON.parse(panierString)
     let newquantity = element.value
-    window.localStorage.setItem(id, [id1,color,newquantity])
+
+
+    for(let key in panier){
+
+        let id = key
+        let article = panier[id]
+        
+        for( let color in article){
+            number = article[color]
+            if(id == eid && color == ecolor){
+                 panier[id][color] = newquantity
+                break  
+            }
+        }
+    }
+        
+    let productprice = jsondata[eid]['price']    
+    
 
 
     if(newquantity > number){
@@ -115,10 +154,15 @@ async function changer(element, id){
         totalprice = totalprice - productprice
     }
 
-    document.getElementById(`nbr${id1}`).innerHTML = "Qté :" + newquantity
+    document.getElementById(`nbr${eid}${ecolor}`).innerHTML = "Qté :" + newquantity
     // totalprice = ((newquantity > number) ?  totalprice + productprice : totalprice - productprice)
     // // totalprice = number-price
     document.getElementById("totalPrice").innerHTML = totalprice
+
+
+    newPanierString = JSON.stringify(panier)
+    window.localStorage.setItem("panier", newPanierString)
+
 }
 
 
@@ -296,8 +340,9 @@ const formulaireAvis = document.querySelector(".cart__order__form").addEventList
 
     let data = await orderForm.json()  
     console.log(data)
-    
+    console.log(idArray)
     window.location.replace(`http://127.0.0.1:5500/front/html/confirmation.html?orderid="${data.orderId}"`) 
 
-    // localStorage.clear();
+    localStorage.clear();
 });
+// localStorage.clear();
