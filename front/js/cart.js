@@ -250,12 +250,16 @@ function isThisEmail(mot){
     
  //Fonction regroupée 
 function checkInput(){    //La fonction checkInput regroupe les 3 fonctions
-
-    checkPrenomNomVille('firstName')
-    checkPrenomNomVille('lastName')
-    checkPrenomNomVille ('city')  
-    checkAdresse('address')
-    checkEmail('email')
+ if(
+    checkPrenomNomVille('firstName') &&
+    checkPrenomNomVille('lastName') &&
+    checkPrenomNomVille ('city')  &&
+    checkAdresse('address') &&
+    checkEmail('email')){
+        return true
+    }else{
+        return false
+    }
 }
       
       // Envoi de MSG d'erreur
@@ -265,13 +269,15 @@ function checkPrenomNomVille(elementId){
     let outputError = document.getElementById(`${elementId}ErrorMsg`) //les parametre id et le msg a envoyer
     let thereisOnlyLetter = isThereOnlyLetter(output)                   // lance la fonction is thereOnlyLetter et recupere le resultat dans thereIsOnlyLetter en true ou false
         
-if(output != "" && thereisOnlyLetter == false)        //si output n'est pas vide et que le test caractere only est false alors msg derreur
+    if(output != "" && thereisOnlyLetter == false)        //si output n'est pas vide et que le test caractere only est false alors msg derreur
     { 
-    insertMessage(outputError , "Mauvais caractère <3")       
+        insertMessage(outputError , "Mauvais caractère <3")
+        return false
     }
     else
     {
-    insertMessage(outputError , "")           
+        insertMessage(outputError , "") 
+        return true          
     }        
 }      
       
@@ -284,11 +290,13 @@ let thisIsAddress = isThisAddress(output)
 
     if(output != "" && thisIsAddress == false)
     { 
-    insertMessage(outputError , "Mauvais caractère <3")       
+        insertMessage(outputError , "Mauvais caractère <3") 
+        return false      
     }
     else
     {
-    insertMessage(outputError , "")           
+        insertMessage(outputError , "") 
+        return true          
     }        
 } 
 
@@ -304,18 +312,26 @@ function checkEmail(elementId){
     
     if(output != "" && thisIsEmail == false)
     { 
-    insertMessage(outputError , "Mauvais caractère <3")       
+        insertMessage(outputError , "Mauvais caractère <3") 
+        return false    
     }
     else
     {
-    insertMessage(outputError , "")           
+        insertMessage(outputError , "")
+        return true
     }        
 }
       
 const formulaireAvis = document.querySelector(".cart__order__form").addEventListener("submit", async function (event) {
     //stop laction par defaut
    event.preventDefault()	
-      
+    
+   if(checkInput() == false) {
+    alert("Il y a une erreur dans votre formulaire")
+    return
+   }    
+   
+
    let contact = {
      firstName: event.target.querySelector("[name=firstName]").value,
      lastName: event.target.querySelector("[name=lastName]").value,     
