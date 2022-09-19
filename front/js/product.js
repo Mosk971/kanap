@@ -49,41 +49,40 @@ document.getElementById("addToCart").onclick = function(e){             //au cli
     alert('Choisissez une quantité')
     return
   }  
-  //----------------version 1
-
-  // let nbpanier = window.localStorage.getItem("nbpanier")
-  // nbpanier = parseInt(nbpanier);  
-  // nbpanier += 1
-  // console.log(nbpanier) 
   
-  // if(isNaN(nbpanier)){
-  //   nbpanier = 0
-  // }
-  
-  // window.localStorage.setItem("nbpanier",nbpanier)
-  // window.localStorage.setItem(nbpanier,[productid, productSelectedColor, productquantity])
-
 
 //---------version 2
 
-//traitemetn des donnees
+//traitement des donnees
 
+  /*
+  panier{
+    productid: {
+      couleur: quantité
+    }
+  }
+  */
+
+
+  //conversion en entiers
   productquantity = parseInt(productquantity)  
   
   let oldgetpanier = window.localStorage.getItem("panier")
   let oldpanierjsonObject = JSON.parse(oldgetpanier);
   console.error(oldpanierjsonObject)
-
+  
   let panier = oldpanierjsonObject
+
+  //si panier est vide, creer un object vide.
   if(!panier){
     panier = {}
   }  
-  
+  //si panier ne contient pas la clé product id, creer un objet vide.
   if(!panier[productid]){
     panier[productid] = {}     
   }
 
-  
+   //s'il n'y pas la couleur associé a ce productId dans le panier, alors la quantity est 0.
   if(!panier[productid][productSelectedColor]){
     panier[productid][productSelectedColor] = 0
   }

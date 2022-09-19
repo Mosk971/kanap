@@ -20,7 +20,7 @@ async function panier () {
     const productsdata = await response.json();
     //conversion de la reponse  
     
-    
+    // L'id de chaque produit est récupérer dans productdataid puis stocker dans jsondata
     for(let productdata of productsdata){
         
         let productdataid = productdata["_id"]
@@ -31,17 +31,6 @@ async function panier () {
     
     
     for(let key in panier){
-        //     console.log(i)
-        //                                                      //  window.localStorage.setItem(i+1, "")
-        // let articledata = window.localStorage.getItem(i+1)
-        
-        // if(articledata == ''){
-            
-        //     continue
-        // }
-
-        // let articlearray = articledata.split(",")
-        
 
         let id = key
         let article = panier[id]
@@ -51,31 +40,82 @@ async function panier () {
 
             
             idArray.push(id)
-            let productdata = jsondata[id]
+            let productdata = jsondata[id]           
 
-            let productdetails = `<article class="cart__item" data-id="${id}" data-color="${color}">
-                <div class="cart__item__img">
-                    <img src="${productdata['imageUrl']}" alt="Photographie d'un canapé">
-                </div>
-                <div class="cart__item__content">
-                    <div class="cart__item__content__description">
-                        <h2>${productdata['name']}</h2>
-                        <p>${color}</p>
-                        <p>${productdata['price']}</p>
-                    </div>
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p id="nbr${id}${color}">Qté :${number}</p>
-                            <input type="number" onchange ="changer(this, '${id}','${color}')" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${number}">
-                        </div>
-                        <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem" onclick ="deleteItem(this, '${id}', '${color}')" >Supprimer</p>
-                        </div>
-                    </div>
-                </div>
-                </article>`
+            
+            //remplacement html par creation de balise  et d'attribut - innerTEXT
+            const productdetails = document.createElement("article");
+                productdetails.classList.add("cart__item");
+                productdetails.setAttribute("data-id", id);
+                productdetails.setAttribute("data-color", color); 
 
-            document.getElementById("cart__items").innerHTML += productdetails
+                const cart__item__img = document.createElement("div")
+                    cart__item__img.classList.add("cart__item__img");                
+                    productdetails.appendChild(cart__item__img);
+
+                    const eimg = document.createElement("img")
+                        eimg.src = productdata['imageUrl']
+                        eimg.setAttribute("alt", "Photographie d'un canapé");
+                        cart__item__img.appendChild(eimg)
+
+                                     
+                const cart__item__content = document.createElement("div")
+                    cart__item__content.classList.add("cart__item__content");
+                    productdetails.appendChild(cart__item__content);
+
+                    const cart__item__content__description = document.createElement("div")
+                        cart__item__content__description.classList.add("cart__item__content__description")
+                        cart__item__content.appendChild(cart__item__content__description)   
+                    
+                        const descriptionTitle = document.createElement("h2")
+                            descriptionTitle.innerText = productdata['name'];                            
+                            cart__item__content__description.appendChild(descriptionTitle);
+
+                        const descriptionColor =  document.createElement("p")  
+                            descriptionColor.innerText = color;
+                            cart__item__content__description.appendChild(descriptionColor);
+
+                        const descriptionPrice =  document.createElement("p")  
+                            descriptionPrice.innerText = productdata['price'];
+                            cart__item__content__description.appendChild(descriptionPrice);
+
+
+                    const cart__item__content__settings = document.createElement("div")
+                        cart__item__content__settings.classList.add("cart__item__content__settings")
+                        cart__item__content.appendChild(cart__item__content__settings)
+
+                        const cart__item__content__settings__quantity = document.createElement("div")
+                            cart__item__content__settings__quantity.classList.add("cart__item__content__settings__quantity")
+                            cart__item__content__settings.appendChild(cart__item__content__settings__quantity)
+
+                                const descriptionQuantity =  document.createElement("p")
+                                    descriptionQuantity.setAttribute("id", "nbr"+id+color)
+                                    descriptionQuantity.innerText = "Qté :"+number;
+                                    cart__item__content__settings__quantity.appendChild(descriptionQuantity);
+
+                                const descriptionSelectQuantity = document.createElement("input")
+                                    descriptionSelectQuantity.setAttribute("type", "number")
+                                    descriptionSelectQuantity.setAttribute("onchange", "changer(this, '"+id+"','"+color+"')")
+                                    descriptionSelectQuantity.classList.add("itemQuantity")
+                                    descriptionSelectQuantity.setAttribute("name","itemQuantity")
+                                    descriptionSelectQuantity.setAttribute("min","1")
+                                    descriptionSelectQuantity.setAttribute("max","100")
+                                    descriptionSelectQuantity.setAttribute("value", number)
+                                    cart__item__content__settings__quantity.appendChild(descriptionSelectQuantity)
+
+                                
+                        const cart__item__content__settings__delete = document.createElement("div")
+                            cart__item__content__settings__delete.classList.add("cart__item__content__settings__delete")
+                            cart__item__content__settings.appendChild(cart__item__content__settings__delete)
+                                
+                                
+                                    const descriptionDeleteButton = document.createElement("p")   
+                                    descriptionDeleteButton.setAttribute("onclick", "deleteItem(this, '"+id+"','"+color+"')")
+                                    descriptionDeleteButton.innerText = "Supprimer"
+                                    cart__item__content__settings__delete.appendChild(descriptionDeleteButton)            
+            
+            //ajout au html
+            document.querySelector("#cart__items").appendChild(productdetails)            
 
             totalprice += number*productdata.price
         }
@@ -195,13 +235,13 @@ function isThereAnumber (word) {
     return numberFound     
 } 
       
-      
+  //insertion des error msg    
 function insertMessage (element, errorMessage){    	 
     element.innerHTML = errorMessage     
 } 
       
      
-      
+  // verifie la presence de chiffre    
 function isThereOnlyLetter(mot){
     var Regex = /^[a-zA-Z-\s]+$/
 
@@ -214,7 +254,7 @@ function isThereOnlyLetter(mot){
     else
     {      
         return false
-}
+    }
 }
       
 function isThisAddress(mot){
@@ -229,7 +269,7 @@ function isThisAddress(mot){
     else
     {      
         return false
-}
+    }
 }      
       
    // Regex pour conditionner les caracteres pour email   
@@ -248,21 +288,21 @@ function isThisEmail(mot){
 }
 }       
     
- //Fonction regroupée 
+    //Fonctions regroupée 
 function checkInput(){    //La fonction checkInput regroupe les 3 fonctions
- if(
-    checkPrenomNomVille('firstName') &&
-    checkPrenomNomVille('lastName') &&
-    checkPrenomNomVille ('city')  &&
-    checkAdresse('address') &&
-    checkEmail('email')){
-        return true
-    }else{
-        return false
-    }
+    if(
+        checkPrenomNomVille('firstName') &&
+        checkPrenomNomVille('lastName') &&
+        checkPrenomNomVille ('city')  &&
+        checkAdresse('address') &&
+        checkEmail('email')){
+            return true
+        }else{
+            return false
+        }
 }
       
-      // Envoi de MSG d'erreur
+    // Verifie les inputs Prenom Nom et Ville soit true sinon Envoi de MSG d'erreur
 function checkPrenomNomVille(elementId){
     
     let output = document.getElementById(elementId).value  //recupere la valeur
@@ -281,12 +321,12 @@ function checkPrenomNomVille(elementId){
     }        
 }      
       
-      
+    // verifie l'input adresse  
 function checkAdresse(elementId){
 
-let output = document.getElementById(elementId).value
-let outputError = document.getElementById(`${elementId}ErrorMsg`)
-let thisIsAddress = isThisAddress(output)      
+    let output = document.getElementById(elementId).value
+    let outputError = document.getElementById(`${elementId}ErrorMsg`)
+    let thisIsAddress = isThisAddress(output)      
 
     if(output != "" && thisIsAddress == false)
     { 
@@ -300,15 +340,12 @@ let thisIsAddress = isThisAddress(output)
     }        
 } 
 
-      
+    //vérifie que l'input email soit true sinon envoie un msg d'erreur    
 function checkEmail(elementId){
 
     let output = document.getElementById(elementId).value
-    let outputError = document.getElementById(`${elementId}ErrorMsg`)
-
-                 
-    let thisIsEmail = isThisEmail(output)      
-
+    let outputError = document.getElementById(`${elementId}ErrorMsg`)                 
+    let thisIsEmail = isThisEmail(output) 
     
     if(output != "" && thisIsEmail == false)
     { 
@@ -323,7 +360,7 @@ function checkEmail(elementId){
 }
       
 const formulaireAvis = document.querySelector(".cart__order__form").addEventListener("submit", async function (event) {
-    //stop laction par defaut
+   //stop l'action par defaut
    event.preventDefault()	
     
    if(checkInput() == false) {
@@ -339,10 +376,8 @@ const formulaireAvis = document.querySelector(".cart__order__form").addEventList
      city: event.target.querySelector("[name=city]").value,
      email: event.target.querySelector("[name=email]").value,
    };
-   //conversion JSON de order
-//    const dataToSend = JSON.stringify(dfdf)
-//    const arrayToSend = JSON.stringify(df)   
-    console.log(contact)
+      
+    
    
     let bodyToSend = {contact:contact, products: idArray}
     bodyToSend = JSON.stringify(bodyToSend)
