@@ -76,7 +76,7 @@ async function panier () {
                             cart__item__content__description.appendChild(descriptionColor);
 
                         const descriptionPrice =  document.createElement("p")  
-                            descriptionPrice.innerText = productdata['price'];
+                            descriptionPrice.innerText = productdata['price']+" €";
                             cart__item__content__description.appendChild(descriptionPrice);
 
 
