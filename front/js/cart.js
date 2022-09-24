@@ -258,7 +258,7 @@ function isThereOnlyLetter(mot){
 }
       
 function isThisAddress(mot){
-    var Regex = /^[a-zA-ZÀ-ÿ-., ]*$/
+    var Regex = /^[a-zA-ZÀ-ÿ-.,0-9 ]*$/
 
     let textToTest = mot   
 
