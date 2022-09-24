@@ -104,7 +104,7 @@ document.getElementById("addToCart").onclick = function(e){             //au cli
   console.log(panierjsonObject)
   
 
-  window.location.replace(`http://127.0.0.1:5500/front/html/cart.html`)
+  window.location.replace(`./cart.html`)
   
 }
 

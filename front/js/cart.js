@@ -258,7 +258,7 @@ function isThereOnlyLetter(mot){
 }
       
 function isThisAddress(mot){
-    var Regex = /^[a-zA-Z0-9-\s]+$/
+    var Regex = /^[a-zA-ZÀ-ÿ-., ]*$/
 
     let textToTest = mot   
 
@@ -392,7 +392,7 @@ const formulaireAvis = document.querySelector(".cart__order__form").addEventList
     let data = await orderForm.json()  
     console.log(data)
     console.log(idArray)
-    window.location.replace(`http://127.0.0.1:5500/front/html/confirmation.html?orderid="${data.orderId}"`) 
+    window.location.replace(`./confirmation.html?orderid="${data.orderId}"`) 
 
     localStorage.clear();
 });
